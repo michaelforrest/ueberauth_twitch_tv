@@ -102,8 +102,11 @@ defmodule Ueberauth.Strategy.TwitchTv do
   """
   def handle_callback!(%Plug.Conn{ params: %{ "code" => code } } = conn) do
     module = option(conn, :oauth2_module)
-    token = apply(module, :get_token!, [[code: code, redirect_uri: callback_url(conn)  ]])
-
+    token = apply(module, :get_token!, [[
+      code: code,
+      redirect_uri: callback_url(conn)
+     ]])
+    IO.inspect %{token: token}
     if token.access_token == nil do
       set_errors!(conn, [error(token.other_params["error"], token.other_params["error_description"])])
     else
@@ -157,14 +160,14 @@ defmodule Ueberauth.Strategy.TwitchTv do
     user = conn.private.twitch_tv_user
 
     %Info{
-      name: user["name"],  ## this is your display name
+      name: user["display_name"],
+      image: user["profile_image_url"],
       first_name: nil,
       last_name: nil,
       nickname: nil,
       email: user["email"],
       location: nil,
-      description: user["bio"],
-      image: user["logo"],
+      description: user["description"],
       phone: nil,
       urls: %{
         self: user["self"]
@@ -176,29 +179,26 @@ defmodule Ueberauth.Strategy.TwitchTv do
   Stores the raw information (including the token) obtained from the Twitch Tv callback.
   """
   def extra(conn) do
-    user = conn.private.twitch_tv_user
-
     %Extra {
       raw_info: %{
         token: conn.private.twitch_tv_token,
-        user: user,
-        is_partnered: user["partnered"],
-        email_verified: user["email_verified"]
+        user: conn.private.twitch_tv_user,
+        is_partnered: conn.private.twitch_tv_user["partnered"]
       }
     }
   end
 
   defp fetch_user(conn, token) do
     conn = put_private(conn, :twitch_tv_token, token)
-    path = "https://api.twitch.tv/kraken/user"
-    headers = [Authorization: "OAuth #{token.access_token}", Accept: "application/vnd.api+json"]
-    resp = OAuth2.AccessToken.get(token, path, headers)
+    path = "https://api.twitch.tv/helix/users"
+    headers = [Authorization: "OAuth #{token.access_token}"]
+    resp = Ueberauth.Strategy.TwitchTv.OAuth.get(token, path, headers)
 
     case resp do
       { :ok, %OAuth2.Response{status_code: 401, body: _body}} ->
         set_errors!(conn, [error("token", "unauthorized")])
-      { :ok, %OAuth2.Response{status_code: status_code, body: user} } when status_code in 200..399 ->
-        put_private(conn, :twitch_tv_user, user)
+      { :ok, %OAuth2.Response{status_code: status_code, body: %{"data" => data}} } when status_code in 200..399 ->
+        put_private(conn, :twitch_tv_user, List.first(data))
       { :error, %OAuth2.Error{reason: reason} } ->
         set_errors!(conn, [error("OAuth2", reason)])
     end
