@@ -191,7 +191,7 @@ defmodule Ueberauth.Strategy.TwitchTv do
   defp fetch_user(conn, token) do
     conn = put_private(conn, :twitch_tv_token, token)
     path = "https://api.twitch.tv/kraken/user"
-    headers = [Authorization: "OAuth #{token.access_token}"]
+    headers = [Authorization: "OAuth #{token.access_token}", Accept: "application/vnd.api+json"]
     resp = OAuth2.AccessToken.get(token, path, headers)
 
     case resp do
