@@ -160,12 +160,12 @@ defmodule Ueberauth.Strategy.TwitchTv do
       name: user["name"],  ## this is your display name
       first_name: nil,
       last_name: nil,
-      nickname: nil, 
-      email: user["email"], 
-      location: nil, 
-      description: user["bio"], 
-      image: user["logo"], 
-      phone: nil, 
+      nickname: nil,
+      email: user["email"],
+      location: nil,
+      description: user["bio"],
+      image: user["logo"],
+      phone: nil,
       urls: %{
         self: user["self"]
       }
@@ -191,7 +191,7 @@ defmodule Ueberauth.Strategy.TwitchTv do
   defp fetch_user(conn, token) do
     conn = put_private(conn, :twitch_tv_token, token)
     path = "https://api.twitch.tv/kraken/user"
-    headers = [Authorization: "OAuth #{token.access_token}", Accept: "application/vnd.twitchtv.v5+json"]
+    headers = [Authorization: "OAuth #{token.access_token}"]
     resp = OAuth2.AccessToken.get(token, path, headers)
 
     case resp do
