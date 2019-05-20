@@ -1,21 +1,23 @@
 defmodule UeberauthTwitchTv.Mixfile do
   use Mix.Project
 
-  @version "0.4.0"
+  @version "0.4.1"
 
   def project do
-    [app: :ueberauth_twitch_tv,
-     version: @version,
-     name: "Ueberauth Twitch.tv",
-     package: package,
-     elixir: "~> 1.3",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     source_url: "https://github.com/tim-machine/ueberauth_twitch_tv",
-     homepage_url: "https://github.com/tim-machine/ueberauth_twitch_tv",
-     description: description,
-     deps: deps,
-     docs: docs]
+    [
+      app: :ueberauth_twitch_tv,
+      version: @version,
+      name: "Ueberauth Twitch.tv",
+      package: package(),
+      elixir: "~> 1.3",
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      source_url: "https://github.com/tim-machine/ueberauth_twitch_tv",
+      homepage_url: "https://github.com/tim-machine/ueberauth_twitch_tv",
+      description: description(),
+      deps: deps(),
+      docs: docs()
+    ]
   end
 
   def application do
@@ -23,12 +25,14 @@ defmodule UeberauthTwitchTv.Mixfile do
   end
 
   defp deps do
-    [{:ueberauth, "~> 0.4"},
-     {:oauth2, "~> 0.9"},
+    [
+      {:ueberauth, "~> 0.4"},
+      {:oauth2, "~> 0.9"},
 
-     # docs dependencies
-     {:earmark, "~> 0.2", only: :dev},
-     {:ex_doc, ">= 0.0.0", only: :dev}]
+      # docs dependencies
+      {:earmark, "~> 0.2", only: :dev},
+      {:ex_doc, ">= 0.0.0", only: :dev}
+    ]
   end
 
   defp docs do
@@ -40,9 +44,11 @@ defmodule UeberauthTwitchTv.Mixfile do
   end
 
   defp package do
-    [files: ["lib", "mix.exs", "README.md", "LICENSE"],
+    [
+      files: ["lib", "mix.exs", "README.md", "LICENSE"],
       maintainers: ["Tim Smith"],
       licenses: ["MIT"],
-      links: %{"GitHub": "https://github.com/tim-machine/ueberauth_twitch_tv"}]
+      links: %{GitHub: "https://github.com/tim-machine/ueberauth_twitch_tv"}
+    ]
   end
 end
