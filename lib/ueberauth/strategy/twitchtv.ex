@@ -70,7 +70,8 @@ defmodule Ueberauth.Strategy.TwitchTv do
   """
   use Ueberauth.Strategy, uid_field: :login,
                           default_scope: "user,public_repo",
-                          oauth2_module: Ueberauth.Strategy.TwitchTv.OAuth
+                          oauth2_module: Ueberauth.Strategy.TwitchTv.OAuth,
+                          ignores_csrf_attack: true # NOT RECOMMENDED https://github.com/ueberauth/ueberauth/blob/1e67842a41da850b8f671ac6a052acd8e2ce810d/lib/ueberauth/strategy.ex#L274
 
   alias Ueberauth.Auth.Info
   alias Ueberauth.Auth.Credentials
