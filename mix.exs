@@ -23,7 +23,7 @@ defmodule UeberauthTwitchTv.Mixfile do
   end
 
   defp deps do
-    [{:ueberauth, "~> 0.4"},
+    [{:ueberauth, "~> 0.6"},
      {:oauth2, "~> 0.9"},
 
      # docs dependencies
