@@ -107,7 +107,7 @@ defmodule Ueberauth.Strategy.TwitchTv do
       code: code,
       redirect_uri: callback_url(conn)
      ]])
-    IO.inspect %{token: token}
+    IO.inspect %{token: token, code: code, module: module}
     if token.access_token == nil do
       set_errors!(conn, [error(token.other_params["error"], token.other_params["error_description"])])
     else
@@ -117,6 +117,7 @@ defmodule Ueberauth.Strategy.TwitchTv do
 
   @doc false
   def handle_callback!(conn) do
+    IO.inspect(conn_inside_twitchtv_ex: conn)
     set_errors!(conn, [error("missing_code", "No code received")])
   end
 
@@ -191,14 +192,20 @@ defmodule Ueberauth.Strategy.TwitchTv do
 
   defp fetch_user(conn, token) do
     conn = put_private(conn, :twitch_tv_token, token)
+
+    token = %{access_token: access_token} = Jason.decode!(token.access_token) |> OAuth2.AccessToken.new() # I don't know why it's getting parsed wrong.
+    [client_id: client_id, client_secret: _] = Application.get_env(:ueberauth, Ueberauth.Strategy.TwitchTv.OAuth)
     path = "https://api.twitch.tv/helix/users"
-    headers = [Authorization: "OAuth #{token.access_token}"]
-    resp = Ueberauth.Strategy.TwitchTv.OAuth.get(token, path, headers)
+    headers = [
+      "Client-Id": client_id
+    ]
+    resp = Ueberauth.Strategy.TwitchTv.OAuth.get(token.access_token, path, headers)
 
     case resp do
       { :ok, %OAuth2.Response{status_code: 401, body: _body}} ->
         set_errors!(conn, [error("token", "unauthorized")])
-      { :ok, %OAuth2.Response{status_code: status_code, body: %{"data" => data}} } when status_code in 200..399 ->
+      { :ok, %OAuth2.Response{status_code: status_code, body: body } } when status_code in 200..399 ->
+        %{"data" => data} = Jason.decode!(body)
         put_private(conn, :twitch_tv_user, List.first(data))
       { :error, %OAuth2.Error{reason: reason} } ->
         set_errors!(conn, [error("OAuth2", reason)])
