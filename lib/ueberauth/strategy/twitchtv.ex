@@ -107,7 +107,6 @@ defmodule Ueberauth.Strategy.TwitchTv do
       code: code,
       redirect_uri: callback_url(conn)
      ]])
-    IO.inspect %{token: token, code: code, module: module}
     if token.access_token == nil do
       set_errors!(conn, [error(token.other_params["error"], token.other_params["error_description"])])
     else
@@ -117,7 +116,6 @@ defmodule Ueberauth.Strategy.TwitchTv do
 
   @doc false
   def handle_callback!(conn) do
-    IO.inspect(conn_inside_twitchtv_ex: conn)
     set_errors!(conn, [error("missing_code", "No code received")])
   end
 
