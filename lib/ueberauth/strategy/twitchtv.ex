@@ -107,7 +107,6 @@ defmodule Ueberauth.Strategy.TwitchTv do
       code: code,
       redirect_uri: callback_url(conn)
      ]])
-    IO.inspect %{token: token, code: code, module: module}
     if token.access_token == nil do
       set_errors!(conn, [error(token.other_params["error"], token.other_params["error_description"])])
     else
