@@ -56,11 +56,12 @@ defmodule Ueberauth.Strategy.TwitchTv.OAuth do
   end
 
   def get(token, url, headers \\ [], options \\ []) do
-    headers = Dict.get(options, :headers, [])
+    # headers = Dict.get(options, :headers, [])
     options = Dict.get(options, :options, [])
     client_options = Dict.get(options, :client_options, [])
     client = client([token: token])
 
+    IO.inspect HEADERS_IN_OAUTH: headers
     client
     |> put_param("client_secret", client.client_secret)
     |> OAuth2.Client.get(url, headers, options)
