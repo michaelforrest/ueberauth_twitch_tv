@@ -7,15 +7,15 @@ defmodule UeberauthTwitchTv.Mixfile do
     [app: :ueberauth_twitch_tv,
      version: @version,
      name: "Ueberauth Twitch.tv",
-     package: package,
+     package: package(),
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      source_url: "https://github.com/tim-machine/ueberauth_twitch_tv",
      homepage_url: "https://github.com/tim-machine/ueberauth_twitch_tv",
-     description: description,
-     deps: deps,
-     docs: docs]
+     description: description(),
+     deps: deps(),
+     docs: docs()]
   end
 
   def application do
